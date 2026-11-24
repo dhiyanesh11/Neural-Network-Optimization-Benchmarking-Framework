@@ -32,6 +32,21 @@ def _batch_parts(batch: Any, device: torch.device) -> tuple[Any, torch.Tensor]:
 
 
 def _forward(model: nn.Module, inputs: Any) -> torch.Tensor:
+    try:
+        input_dtype = next(
+            parameter.dtype for parameter in model.parameters() if parameter.is_floating_point()
+        )
+    except StopIteration:
+        input_dtype = None
+
+    def cast(value: Any) -> Any:
+        if isinstance(value, torch.Tensor) and value.is_floating_point() and input_dtype:
+            return value.to(dtype=input_dtype)
+        if isinstance(value, Mapping):
+            return {key: cast(item) for key, item in value.items()}
+        return value
+
+    inputs = cast(inputs)
     output = model(**inputs) if isinstance(inputs, Mapping) else model(inputs)
     if hasattr(output, "logits"):
         output = output.logits
