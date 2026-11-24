@@ -1,5 +1,7 @@
 """Streamlit AppTest smoke check for dashboard rendering."""
 
+from pathlib import Path
+
 from streamlit.testing.v1 import AppTest
 
 from nnbench.store import ResultStore
@@ -22,6 +24,7 @@ def test_dashboard_renders_sample_database_without_exception(monkeypatch, tmp_pa
         metadata={"model": "toy", "optimizer": "baseline", "hardware": {"cpu_count": 4}},
     )
     monkeypatch.setenv("NNBENCH_DB", str(database))
-    app = AppTest.from_file("dashboard/app.py", default_timeout=20).run()
+    dashboard_path = Path(__file__).resolve().parents[2] / "dashboard" / "app.py"
+    app = AppTest.from_file(str(dashboard_path), default_timeout=20).run()
     assert not app.exception
     assert any("Benchmark runs" in item.value for item in app.subheader)
