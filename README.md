@@ -43,6 +43,18 @@ Install the `export` extra to enable ONNX and ONNX Runtime. `export_onnx` export
 
 `ResultStore` creates the SQLite experiments/runs/metrics schema on first use and stores config hashes, hardware, library details, Git revision, and per-run metrics. Use `query_results` to filter saved runs, `export_csv`/`export_json` for files, `summary_table` for grouped metric averages, `compare_to_baseline` for speedup/compression/accuracy drop, and `pareto_front` or `plot_pareto` for trade-off analysis.
 
+## CLI and dashboard
+
+```powershell
+nnbench run experiment=demo --synthetic
+nnbench report --out reports
+nnbench list-models
+nnbench list-optimizers
+streamlit run dashboard/app.py
+```
+
+Install the `dashboard` extra for Streamlit. Set `NNBENCH_DB` to point the dashboard at a different SQLite database. The demo config uses offline synthetic CIFAR-like samples so it runs without dataset downloads.
+
 ## Checks
 
 ```powershell
