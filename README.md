@@ -39,6 +39,10 @@ Built-ins are `ptq_dynamic_int8` (dynamic Linear/LSTM quantization), `ptq_static
 
 Install the `export` extra to enable ONNX and ONNX Runtime. `export_onnx` exports with a dynamic batch axis and validates with `onnx.checker`; `ORTModel` runs the graph with a selectable provider and graph optimization level. `quantize_onnx_dynamic` produces an INT8-weight graph. `ORTModel` can be passed directly to `BenchmarkRunner` and reports the ONNX file size.
 
+## Results store and analysis
+
+`ResultStore` creates the SQLite experiments/runs/metrics schema on first use and stores config hashes, hardware, library details, Git revision, and per-run metrics. Use `query_results` to filter saved runs, `export_csv`/`export_json` for files, `summary_table` for grouped metric averages, `compare_to_baseline` for speedup/compression/accuracy drop, and `pareto_front` or `plot_pareto` for trade-off analysis.
+
 ## Checks
 
 ```powershell
