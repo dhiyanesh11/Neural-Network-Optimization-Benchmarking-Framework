@@ -15,6 +15,6 @@ jobs:
           cache: pip
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e ".[dev,vision,nlp]"
-      - run: ruff check src tests
-      - run: black --check src tests
+      - run: ruff check src tests scripts
+      - run: black --check src tests scripts
       - run: pytest -q

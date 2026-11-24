@@ -27,6 +27,10 @@ The registry includes `mobilenet_v2`, `resnet18`, and `distilbert_sst2`, with `c
 
 To register another model, add a factory in `src/nnbench/registry/models.py` and expose its stable name through `MODEL_FACTORIES`. Add data loaders to `src/nnbench/registry/datasets.py`; keep synthetic inputs available for fast integration checks.
 
+## Benchmarking
+
+`BenchmarkRunner.run(model, dataloader, config)` evaluates accuracy and F1, times repeated inference with warm-up, reports p50/p95/p99 latency and throughput, measures serialized model size and parameter counts, and captures process/GPU memory. Set `max_eval_batches` for a short smoke run or `batch_sizes` for a latency sweep. FLOPs are populated when the optional `flops` extra is installed and the model can be traced by fvcore.
+
 ## Checks
 
 ```powershell
