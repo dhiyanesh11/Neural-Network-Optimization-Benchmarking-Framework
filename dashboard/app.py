@@ -9,6 +9,7 @@ import streamlit as st
 
 from nnbench.analysis.plots import plot_pareto
 from nnbench.analysis.report import flatten_result
+from nnbench.selector import recommend, recommendation_message
 from nnbench.store import ResultStore
 
 st.set_page_config(page_title="nnbench results", layout="wide")
@@ -28,7 +29,7 @@ filtered = (
 )
 flat_rows = [flatten_result(row) for row in filtered]
 frame = pd.DataFrame(flat_rows)
-tabs = st.tabs(["Results", "Pareto", "Latency", "Compare", "Hardware"])
+tabs = st.tabs(["Results", "Pareto", "Latency", "Compare", "Hardware", "Recommend"])
 
 with tabs[0]:
     st.subheader("Benchmark runs")
@@ -64,3 +65,23 @@ with tabs[3]:
 with tabs[4]:
     st.subheader("Hardware and runtime")
     st.json(filtered[-1].get("hardware", {}))
+
+with tabs[5]:
+    st.subheader("Find an optimization for your limits")
+    max_latency = st.number_input("Maximum latency (ms)", min_value=0.0, value=1000.0)
+    max_size = st.number_input("Maximum model size (MB)", min_value=0.0, value=1000.0)
+    min_accuracy = st.number_input(
+        "Minimum accuracy", min_value=0.0, max_value=1.0, value=0.0, step=0.01
+    )
+    constraints = {
+        "max_latency_ms": max_latency,
+        "max_size_mb": max_size,
+        "min_accuracy": min_accuracy,
+    }
+    ranked = recommend(filtered, constraints)
+    if ranked:
+        st.dataframe(
+            pd.DataFrame([flatten_result(row) for row in ranked]), use_container_width=True
+        )
+    else:
+        st.info(recommendation_message(constraints))

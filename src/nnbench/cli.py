@@ -13,6 +13,7 @@ from nnbench.experiments import run_experiment
 from nnbench.logging import configure_logging
 from nnbench.optimizers import list_optimizers
 from nnbench.registry import list_models
+from nnbench.selector import recommend, recommendation_message
 from nnbench.store import ResultStore
 
 logger = logging.getLogger(__name__)
@@ -39,6 +40,14 @@ def build_parser() -> argparse.ArgumentParser:
     report_parser = subparsers.add_parser("report", help="Export saved runs and trade-off plots")
     report_parser.add_argument("--db", default="artifacts/nnbench.sqlite")
     report_parser.add_argument("--out", default="reports")
+    recommend_parser = subparsers.add_parser(
+        "recommend", help="Recommend optimizers under constraints"
+    )
+    recommend_parser.add_argument("--db", default="artifacts/nnbench.sqlite")
+    recommend_parser.add_argument("--max-latency-ms", type=float)
+    recommend_parser.add_argument("--max-size-mb", type=float)
+    recommend_parser.add_argument("--min-accuracy", type=float)
+    recommend_parser.add_argument("--include-baseline", action="store_true")
     subparsers.add_parser("list-models", help="List registered models")
     subparsers.add_parser("list-optimizers", help="List registered optimizer plugins")
     return parser
@@ -81,6 +90,23 @@ def main(argv: Sequence[str] | None = None) -> int:
             plot_pareto(rows).write_html(out_dir / "pareto_latency.html")
             plot_pareto(rows, x="model_size_mb").write_html(out_dir / "pareto_size.html")
         print(f"Wrote {len(rows)} run(s) to {out_dir}")
+        return 0
+    if args.command == "recommend":
+        constraints = {
+            key: value
+            for key, value in (
+                ("max_latency_ms", args.max_latency_ms),
+                ("max_size_mb", args.max_size_mb),
+                ("min_accuracy", args.min_accuracy),
+            )
+            if value is not None
+        }
+        rows = ResultStore(args.db).query_results()
+        ranked = recommend(rows, constraints, include_baseline=args.include_baseline)
+        if not ranked:
+            print(recommendation_message(constraints))
+            return 1
+        print(json.dumps(ranked, indent=2, default=str))
         return 0
     if args.command == "list-models":
         print("\n".join(list_models()))

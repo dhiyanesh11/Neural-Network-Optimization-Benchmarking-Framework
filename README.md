@@ -50,10 +50,13 @@ nnbench run experiment=demo --synthetic
 nnbench report --out reports
 nnbench list-models
 nnbench list-optimizers
+nnbench recommend --max-latency-ms 20 --max-size-mb 10 --min-accuracy 0.8
 streamlit run dashboard/app.py
 ```
 
 Install the `dashboard` extra for Streamlit. Set `NNBENCH_DB` to point the dashboard at a different SQLite database. The demo config uses offline synthetic CIFAR-like samples so it runs without dataset downloads.
+
+The recommender filters stored runs by latency, size, and accuracy constraints and ranks feasible optimizations by accuracy, then latency and size. It excludes baseline runs unless `--include-baseline` is passed.
 
 ## Checks
 
