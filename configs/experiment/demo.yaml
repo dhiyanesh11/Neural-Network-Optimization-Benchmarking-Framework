@@ -1,0 +1,19 @@
+name: demo
+seed: 42
+num_threads: 1
+model: mobilenet_v2
+dataset: cifar10
+batch_size: 4
+synthetic_samples: 8
+synthetic: true
+max_eval_batches: 2
+batch_sizes: [1, 4]
+backends: [pytorch]
+save_optimized: true
+artifact_dir: artifacts
+benchmark:
+  warmup_iters: 2
+  measure_iters: 5
+optimizers:
+  - name: prune_l1
+    sparsity: 0.25
