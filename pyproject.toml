@@ -22,12 +22,16 @@ vision = ["torchvision>=0.16"]
 nlp = ["transformers>=4.40,<5", "datasets>=2.18,<5"]
 flops = ["fvcore>=0.1.5"]
 export = ["onnx>=1.16", "onnxruntime>=1.18"]
+analytics = ["pandas>=2", "plotly>=5"]
 
 [project.scripts]
 nnbench = "nnbench.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"nnbench.store" = ["schema.sql"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
