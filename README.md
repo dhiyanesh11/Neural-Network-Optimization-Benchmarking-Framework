@@ -31,6 +31,10 @@ To register another model, add a factory in `src/nnbench/registry/models.py` and
 
 `BenchmarkRunner.run(model, dataloader, config)` evaluates accuracy and F1, times repeated inference with warm-up, reports p50/p95/p99 latency and throughput, measures serialized model size and parameter counts, and captures process/GPU memory. Set `max_eval_batches` for a short smoke run or `batch_sizes` for a latency sweep. FLOPs are populated when the optional `flops` extra is installed and the model can be traced by fvcore.
 
+## Optimizer plugins
+
+Built-ins are `ptq_dynamic_int8` (dynamic Linear/LSTM quantization), `ptq_static_int8` (calibrated FX conversion), `qat_int8` (fake-quant training then conversion), `fp16`, `prune_l1` (global weight sparsity), `prune_structured_l1` (output channel removal by masking), `torch_compile`, and `knowledge_distillation`. Each accepts its options from config through `get_optimizer(name, **params)` and returns a deep-copied model. Pruning removes the temporary masks after materializing zeros. FP16 inference requires model inputs with floating values; the benchmark runner casts floating inputs to the model's parameter dtype. Optimized checkpoints and metadata can be written with `save_optimized_model`.
+
 ## Checks
 
 ```powershell
