@@ -58,10 +58,20 @@ Install the `dashboard` extra for Streamlit. Set `NNBENCH_DB` to point the dashb
 
 The recommender filters stored runs by latency, size, and accuracy constraints and ranks feasible optimizations by accuracy, then latency and size. It excludes baseline runs unless `--include-baseline` is passed.
 
+## Containers
+
+```powershell
+docker build -f docker/Dockerfile.cpu -t nnbench:cpu .
+docker run --rm -v ${PWD}/artifacts:/app/artifacts nnbench:cpu
+docker compose up dashboard
+```
+
+For an NVIDIA host, build `docker/Dockerfile.cuda` and run with `--gpus all`.
+
 ## Checks
 
 ```powershell
-ruff check src tests
-black --check src tests
-pytest -q
+ruff check src tests scripts dashboard
+black --check src tests scripts dashboard
+pytest --cov=nnbench --cov-report=term-missing --cov-fail-under=80
 ```

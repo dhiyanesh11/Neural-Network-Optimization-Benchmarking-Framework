@@ -1,0 +1,12 @@
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.cpu
+    command: ["streamlit", "run", "dashboard/app.py", "--server.address=0.0.0.0"]
+    ports:
+      - "8501:8501"
+    environment:
+      NNBENCH_DB: /app/artifacts/nnbench.sqlite
+    volumes:
+      - ./artifacts:/app/artifacts
