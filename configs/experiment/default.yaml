@@ -1,0 +1,9 @@
+# Minimal reproducible experiment configuration. Later modules extend this schema.
+seed: 42
+model: mobilenet_v2
+dataset: cifar10
+batch_size: 32
+optimizers: []
+benchmark:
+  warmup_iters: 20
+  measure_iters: 100
