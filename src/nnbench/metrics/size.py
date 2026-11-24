@@ -18,6 +18,9 @@ def parameter_count(model: nn.Module, *, trainable_only: bool = False) -> int:
 
 def model_size_bytes(model: nn.Module) -> int:
     """Measure serialized state-dict size using a temporary file."""
+    artifact_size = getattr(model, "model_size_bytes", None)
+    if callable(artifact_size):
+        return int(artifact_size())
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = os.path.join(temp_dir, "model.pt")
         torch.save(model.state_dict(), temp_path)
