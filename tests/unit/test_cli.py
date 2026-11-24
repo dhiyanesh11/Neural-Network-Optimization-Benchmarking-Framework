@@ -10,6 +10,20 @@ def test_list_commands_exit_success(capsys) -> None:
     assert "prune_l1" in capsys.readouterr().out
 
 
+def test_recommend_command_prints_feasibility_message(tmp_path, capsys) -> None:
+    exit_code = main(
+        [
+            "recommend",
+            "--db",
+            str(tmp_path / "empty.sqlite"),
+            "--min-accuracy",
+            "0.99",
+        ]
+    )
+    assert exit_code == 1
+    assert "No stored optimization meets" in capsys.readouterr().out
+
+
 def test_invalid_config_has_clear_error(capsys, caplog, tmp_path) -> None:
     exit_code = main(["run", str(tmp_path / "missing.yaml"), "--db", str(tmp_path / "x.sqlite")])
     assert exit_code == 2
